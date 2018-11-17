@@ -5,17 +5,29 @@ var Food = new Phaser.Class({
     initialize: function Food(scene, x, y) {
         Phaser.GameObjects.Image.call(this, scene);
 
-        this.setTexture('food');
-        this.setPosition(x * GRID_SIZE, y * GRID_SIZE);
-        this.setOrigin(0);
+        // list of meals
+        this.meals = scene.add.group();
 
-        this.total = 0;
+        // create one
+        this.newFood(x, y);
+
+        // and more
+        while (this.meals.getLength() < MAX_MEALS_ON_SCREEN) {
+            placeNewMeal(this);
+        }
+
+        this.totalEaten = 0;
 
         scene.children.add(this);
     },
 
-    eat: function () {
-        this.total++;
+    newFood: function (x, y) {
+        var newMeal = this.meals.create(x * GRID_SIZE, y * GRID_SIZE, 'food');
+        newMeal.setOrigin(0);
+    },
+
+    increment: function () {
+        this.totalEaten++;
     }
 
 });
@@ -26,10 +38,14 @@ var Food = new Phaser.Class({
  * to filter those out of the possible food locations.
  * If there aren't any locations left, they've won!
  *
- * @method repositionFood
+ * @method placeNewMeal
  * @return {boolean} true if the food was placed, otherwise false
  */
-function repositionFood() {
+function placeNewMeal(food) {
+    if (food.meals.getLength() >= MAX_MEALS_ON_SCREEN) {
+        console.error("FOOD SHOULDN'T BE PLACED!!!");
+    }
+
     //  First create an array that assumes all positions
     //  are valid for the new piece of food
 
@@ -62,7 +78,7 @@ function repositionFood() {
         var pos = Phaser.Math.RND.pick(validLocations);
 
         //  And place it
-        food.setPosition(pos.x * GRID_SIZE, pos.y * GRID_SIZE);
+        food.newFood(pos.x, pos.y);
 
         return true;
     } else {

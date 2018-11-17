@@ -23,8 +23,8 @@ function preload() {
 }
 
 function create() {
-    food = new Food(this, 4, 4);
     snake = new Snake(this, 8, 8);
+    food = new Food(this, 24, 8);
 
     //  Create our keyboard controls
     controls = this.input.keyboard.createCursorKeys();
@@ -56,8 +56,10 @@ function update(time, delta) {
 
     if (snake.update(time)) {
         //  If the snake updated, we need to check for collision against food
-        if (snake.collideWithFood(food)) {
-            repositionFood();
-        }
+        food.meals.getChildren().forEach(function(meal) {
+            if (snake.collideWithMeal(food, meal) && food.meals.getLength() < MAX_MEALS_ON_SCREEN) {
+                placeNewMeal(food);
+            }
+        });
     }
 }

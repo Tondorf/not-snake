@@ -105,19 +105,21 @@ var Snake = new Phaser.Class({
         }
         console.log('shrink');
         var victim = this.body.getChildren()[this.body.getLength()-1]; // get last element
-        //console.log(victim);
         this.body.kill(victim);
         this.body.remove(victim, true, true);
     },
 
-    collideWithFood: function (food) {
-        if (this.head.x === food.x && this.head.y === food.y) {
+    collideWithMeal: function (food, meal) {
+        if (this.head.x === meal.x && this.head.y === meal.y) {
+            console.log("NOMNOMNOM");
             this.blocks2spawn++;
 
-            food.eat();
+            food.increment();
+            food.meals.kill(meal);
+            food.meals.remove(meal, true, true);
 
             //  For every 5 items of food eaten we'll decrease the snake move cooldown a little
-            if (this.moveCooldown > 20 && food.total % 5 === 0) {
+            if (this.moveCooldown > 20 && meal.totalEaten % 5 === 0) {
                 this.moveCooldown -= 5;
             }
 
