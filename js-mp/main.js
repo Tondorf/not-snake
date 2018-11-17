@@ -85,13 +85,17 @@ function new_world(json) {
     snake = json.snake;
     food = json.food;
 
-    positions = zip(snake.xs, snake.ys);
-    console.log(snake);
-
     graphics.clear();
+
     graphics.lineStyle(1, 0x000000, 1);
     graphics.fillStyle(0x000000, 1);
-    positions.forEach(function (pos) {
+    zip(snake.xs, snake.ys).forEach(function (pos) {
+        graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
+    });
+
+    graphics.lineStyle(1, 0xff0000, 1);
+    graphics.fillStyle(0xff0000, 1);
+    zip(food.xs, food.ys).forEach(function (pos) {
         graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
     });
 }
