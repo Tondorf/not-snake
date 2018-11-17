@@ -7,11 +7,9 @@ import time
 import websockets
 
 import world
-from food import spawn_food
-from snake import Snake, Direction
+from snake import Direction
 
 world = world.World()
-snake = Snake.create_at(10, 10)
 
 
 def time_in_ms():
@@ -26,24 +24,22 @@ def serialize_coordinates(coordinates):
     return {'xs': xs, 'ys': ys}
 
 
-def consumer(message, path):
+def consumer(id, message):
     try:
-        snake.direction = Direction(int(message))
+        world.snakes[id].direction = Direction(int(message))
     except ValueError:
         pass
 
 
 def update_world():
-    now = time_in_ms()
-    if not snake.dead and now - snake.last_update > snake.cooldown_in_ms:
-        snake.move(world)
-        snake.last_update = now
+    world.update(time_in_ms())
 
-    if not world.food:
-        spawn_food(world, exclude=snake.body)
+    snakes = [serialize_coordinates(world.snakes[id].body)
+              for id in world.snakes]
 
-    return json.dumps({'snake': serialize_coordinates(snake.body),
-                       'food': serialize_coordinates(world.food)})
+    food = serialize_coordinates(world.food)
+
+    return json.dumps({'snakes': snakes, 'food': food})
 
 
 async def consumer_handler(websocket, path):
@@ -62,12 +58,16 @@ async def producer_handler(websocket, path):
 
 
 async def handler(websocket, path):
-    consumer_task = asyncio.ensure_future(consumer_handler(websocket, path))
-    producer_task = asyncio.ensure_future(producer_handler(websocket, path))
-    done, pending = await asyncio.wait([consumer_task, producer_task],
-                                       return_when=asyncio.FIRST_COMPLETED)
-    for task in pending:
-        task.cancel()
+    world.add_user(websocket)
+    try:
+        consumer_task = asyncio.ensure_future(consumer_handler(websocket, path))
+        producer_task = asyncio.ensure_future(producer_handler(websocket, path))
+        done, pending = await asyncio.wait([consumer_task, producer_task],
+                                           return_when=asyncio.FIRST_COMPLETED)
+        for task in pending:
+            task.cancel()
+    finally:
+        world.remove_user(websocket)
 
 
 if __name__ == '__main__':
