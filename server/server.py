@@ -21,11 +21,16 @@ def serialize_coordinates(coordinates):
     return json.dumps({'xs': xs, 'ys': ys})
 
 
-def consumer(message):
-    try:
-        snake.direction = Direction(int(message))
-    except ValueError:
-        pass
+def consumer(message, path):
+    strip_leading_slash = lambda str: str[1:] if str.startswith('/') else str
+    strip_trailing_slash = lambda str: str[:-1] if path.endswith('/') else str
+    path = strip_trailing_slash(strip_leading_slash(path))
+
+    if path == snake:
+        try:
+            snake.direction = Direction(int(message))
+        except ValueError:
+            pass
 
 
 def producer():
@@ -41,7 +46,7 @@ def producer():
 
 async def consumer_handler(websocket, path):
     async for message in websocket:
-        consumer(message)
+        consumer(message, path)
 
 
 async def producer_handler(websocket, path):

@@ -11,7 +11,7 @@
         <script>
             var button = document.getElementsByTagName('button')
             var output = document.getElementById('output');
-            var websocket = new WebSocket('ws://127.0.0.1:8080');
+            var websocket = new WebSocket('ws://127.0.0.1:8080/snake');
             
             function handle(value) {
                 websocket.send(value);
