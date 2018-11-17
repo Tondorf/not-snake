@@ -36,7 +36,7 @@ class World:
     def add_user(self, id):
         x, y = self.random_but_empty_xypair()
         direction = self.random_direction()
-        self.snakes[id] = Snake.create_at(x, y, direction)
+        self.snakes[id] = Snake.create_at(id, x, y, direction)
 
     def remove_user(self, id):
         if id in self.snakes:

@@ -27,7 +27,8 @@ def serialize_coordinates(coordinates):
 
 def consumer(id, message):
     try:
-        world.snakes[id].direction = Direction(int(message))
+        if id in world.snakes:
+            world.snakes[id].direction = Direction(int(message))
     except ValueError:
         pass
 
