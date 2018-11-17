@@ -65,6 +65,8 @@ async def handler(websocket, path):
                                            return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
             task.cancel()
+    except:
+        pass
     finally:
         world.remove_user(websocket)
 
