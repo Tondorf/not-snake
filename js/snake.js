@@ -8,6 +8,8 @@ var Snake = new Phaser.Class({
         this.head = this.body.create(x * GRID_SIZE, y * GRID_SIZE, 'body');
         this.head.setOrigin(0);
 
+        this.blocks2spawn = STARTLENGTH;
+
         this.alive = true;
         this.moveCooldown = 100;
         this.lastMoveTime = 0; // time when next move can be made
@@ -18,6 +20,10 @@ var Snake = new Phaser.Class({
 
     update: function (time) {
         if (time >= this.lastMoveTime) {
+            if (this.blocks2spawn > 0) {
+                this.grow();
+                this.blocks2spawn--;
+            }
             return this.move(time);
         }
     },
@@ -106,7 +112,7 @@ var Snake = new Phaser.Class({
 
     collideWithFood: function (food) {
         if (this.head.x === food.x && this.head.y === food.y) {
-            this.grow();
+            this.blocks2spawn++;
 
             food.eat();
 
