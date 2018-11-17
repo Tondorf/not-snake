@@ -39,16 +39,21 @@ class World:
         self.snakes[id] = Snake.create_at(x, y, direction)
 
     def remove_user(self, id):
-        del self.snakes[id]
+        if id in self.snakes:
+            del self.snakes[id]
 
     def update(self, now):
+        dead_snakes = []
         for id in self.snakes:
             snake = self.snakes[id]
             if snake.dead:
-                self.remove_user(id)
+                dead_snakes.append(id)
             elif now - snake.last_update > snake.cooldown_in_ms:
                 snake.move(self)
                 snake.last_update = now
+
+        for id in dead_snakes:
+            self.remove_user(id)
 
         if not self.food:
             self.spawn_food()
