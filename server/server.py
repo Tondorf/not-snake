@@ -6,6 +6,7 @@ import time
 
 import websockets
 
+import config
 import world
 from snake import Direction
 
@@ -48,13 +49,10 @@ async def consumer_handler(websocket, path):
 
 
 async def producer_handler(websocket, path):
-    one_ms = 1. / 1000.
-    sleep_time = 100 * one_ms;
-
     while True:
         message = update_world()
         await websocket.send(message)
-        await asyncio.sleep(sleep_time)
+        await asyncio.sleep(config.server_sleep_time_in_ms / 1000.)
 
 
 async def handler(websocket, path):
