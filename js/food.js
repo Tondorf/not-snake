@@ -2,19 +2,17 @@ var Food = new Phaser.Class({
 
     Extends: Phaser.GameObjects.Image,
 
-    initialize:
+    initialize: function Food(scene, x, y) {
+        Phaser.GameObjects.Image.call(this, scene);
 
-        function Food(scene, x, y) {
-            Phaser.GameObjects.Image.call(this, scene);
+        this.setTexture('food');
+        this.setPosition(x * GRID_SIZE, y * GRID_SIZE);
+        this.setOrigin(0);
 
-            this.setTexture('food');
-            this.setPosition(x * GRID_SIZE, y * GRID_SIZE);
-            this.setOrigin(0);
+        this.total = 0;
 
-            this.total = 0;
-
-            scene.children.add(this);
-        },
+        scene.children.add(this);
+    },
 
     eat: function () {
         this.total++;
@@ -40,13 +38,12 @@ function repositionFood() {
 
     for (var y = 0; y < GRID_Y; y++) {
         testGrid[y] = [];
-
         for (var x = 0; x < GRID_X; x++) {
             testGrid[y][x] = true;
         }
     }
 
-    snake.updateGrid(testGrid);
+    snake.markBlockedSpots(testGrid);
 
     //  Purge out false positions
     var validLocations = [];
@@ -68,8 +65,7 @@ function repositionFood() {
         food.setPosition(pos.x * GRID_SIZE, pos.y * GRID_SIZE);
 
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }

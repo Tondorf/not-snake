@@ -1,4 +1,3 @@
-
 var config = {
     type: Phaser.AUTO,
     width: GAME_X,
@@ -14,7 +13,7 @@ var config = {
 
 var snake;
 var food;
-var cursors;
+var controls;
 
 var game = new Phaser.Game(config);
 
@@ -24,11 +23,11 @@ function preload() {
 }
 
 function create() {
-    food = new Food(this, 3, 4);
+    food = new Food(this, 4, 4);
     snake = new Snake(this, 8, 8);
 
     //  Create our keyboard controls
-    cursors = this.input.keyboard.createCursorKeys();
+    controls = this.input.keyboard.createCursorKeys();
 }
 
 function update(time, delta) {
@@ -43,22 +42,18 @@ function update(time, delta) {
      * the LEFT cursor, it ignores it, because the only valid directions you
      * can move in at that time is up and down.
      */
-    if (cursors.left.isDown) {
+    if (controls.left.isDown) {
         snake.faceLeft();
-    }
-    else if (cursors.right.isDown) {
+    } else if (controls.right.isDown) {
         snake.faceRight();
-    }
-    else if (cursors.up.isDown) {
+    } else if (controls.up.isDown) {
         snake.faceUp();
-    }
-    else if (cursors.down.isDown) {
+    } else if (controls.down.isDown) {
         snake.faceDown();
     }
 
     if (snake.update(time)) {
         //  If the snake updated, we need to check for collision against food
-
         if (snake.collideWithFood(food)) {
             repositionFood();
         }

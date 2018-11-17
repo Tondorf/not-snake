@@ -1,29 +1,23 @@
 var Snake = new Phaser.Class({
 
-    initialize:
+    initialize: function Snake(scene, x, y) {
+        this.headPosition = new Phaser.Geom.Point(x, y);
 
-        function Snake(scene, x, y) {
-            this.headPosition = new Phaser.Geom.Point(x, y);
+        this.body = scene.add.group();
 
-            this.body = scene.add.group();
+        this.head = this.body.create(x * GRID_SIZE, y * GRID_SIZE, 'body');
+        this.head.setOrigin(0);
 
-            this.head = this.body.create(x * GRID_SIZE, y * GRID_SIZE, 'body');
-            this.head.setOrigin(0);
-
-            this.alive = true;
-
-            this.speed = 100;
-
-            this.moveTime = 0;
-
-            this.tail = new Phaser.Geom.Point(x, y);
-
-            this.heading = RIGHT;
-            this.direction = RIGHT;
-        },
+        this.alive = true;
+        this.moveCooldown = 100;
+        this.lastMoveTime = 0; // time when next move can be made
+        this.tail = new Phaser.Geom.Point(x, y);
+        this.direction = RIGHT; // where we are going to at the moment
+        this.heading = RIGHT; // where we want to go next
+    },
 
     update: function (time) {
-        if (time >= this.moveTime) {
+        if (time >= this.lastMoveTime) {
             return this.move(time);
         }
     },
@@ -64,15 +58,12 @@ var Snake = new Phaser.Class({
             case LEFT:
                 this.headPosition.x = Phaser.Math.Wrap(this.headPosition.x - 1, 0, GRID_X);
                 break;
-
             case RIGHT:
                 this.headPosition.x = Phaser.Math.Wrap(this.headPosition.x + 1, 0, GRID_X);
                 break;
-
             case UP:
                 this.headPosition.y = Phaser.Math.Wrap(this.headPosition.y - 1, 0, GRID_Y);
                 break;
-
             case DOWN:
                 this.headPosition.y = Phaser.Math.Wrap(this.headPosition.y + 1, 0, GRID_Y);
                 break;
@@ -85,27 +76,20 @@ var Snake = new Phaser.Class({
 
         //  Check to see if any of the body pieces have the same x/y as the head
         //  If they do, the head ran into the body
-
         var hitBody = Phaser.Actions.GetFirst(this.body.getChildren(), {x: this.head.x, y: this.head.y}, 1);
-
         if (hitBody) {
             console.log('dead');
-
             this.alive = false;
-
             return false;
-        }
-        else {
+        } else {
             //  Update the timer ready for the next movement
-            this.moveTime = time + this.speed;
-
+            this.lastMoveTime = time + this.moveCooldown;
             return true;
         }
     },
 
     grow: function () {
         var newPart = this.body.create(this.tail.x, this.tail.y, 'body');
-
         newPart.setOrigin(0);
     },
 
@@ -115,29 +99,24 @@ var Snake = new Phaser.Class({
 
             food.eat();
 
-            //  For every 5 items of food eaten we'll increase the snake speed a little
-            if (this.speed > 20 && food.total % 5 === 0) {
-                this.speed -= 5;
+            //  For every 5 items of food eaten we'll decrease the snake move cooldown a little
+            if (this.moveCooldown > 20 && food.total % 5 === 0) {
+                this.moveCooldown -= 5;
             }
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     },
 
-    updateGrid: function (grid) {
+    markBlockedSpots: function (grid) {
         //  Remove all body pieces from valid positions list
         this.body.children.each(function (segment) {
-
             var bx = segment.x / GRID_SIZE;
             var by = segment.y / GRID_SIZE;
-
             grid[by][bx] = false;
-
         });
-
         return grid;
     }
 
