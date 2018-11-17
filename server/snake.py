@@ -15,12 +15,31 @@ class Direction(Enum):
 class Snake:
     def __init__(self, body, direction):
         self.body = deque(body)
-        self.direction = direction
+        self._direction = direction
         self.cooldown_in_ms = 1000
         self.last_update = 0
+        self.dead = False
 
-    def create_at(head_x, head_y, direction=Direction.LEFT):
+    def create_at(head_x, head_y, direction=Direction.RIGHT):
         return Snake([(head_x, head_y), ], direction)
+
+    @property
+    def direction(self):
+        return self._direction
+
+    @direction.setter
+    def direction(self, direction):
+        valid = True
+        if direction is Direction.LEFT and self._direction is Direction.RIGHT:
+            valid = False
+        if direction is Direction.RIGHT and self._direction is Direction.LEFT:
+            valid = False
+        if direction is Direction.TOP and self._direction is Direction.BOTTOM:
+            valid = False
+        if direction is Direction.BOTTOM and self._direction is Direction.TOP:
+            valid = False
+        if valid:
+            self._direction = direction
 
     def move(self):
         delta = (0, 0)
@@ -45,3 +64,6 @@ class Snake:
         if self.body[0] in food.food:
             self.body.append(tail)
             food.food = []
+
+        if self.body[0] in list(self.body)[1:]:
+            self.dead = True

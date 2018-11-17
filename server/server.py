@@ -33,7 +33,7 @@ def consumer(message, path):
 
 def update_world():
     now = time_in_ms()
-    if now - snake.last_update > snake.cooldown_in_ms:
+    if not snake.dead and now - snake.last_update > snake.cooldown_in_ms:
         snake.move()
         snake.last_update = now
 
