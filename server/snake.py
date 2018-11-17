@@ -1,5 +1,6 @@
 from collections import deque
 from enum import Enum
+import config
 
 
 class Direction(Enum):
@@ -33,4 +34,5 @@ class Snake:
 
         x, y = self.body[0][0:2]
         dx, dy = delta
-        self.body[0] = (x + dx, y + dy)
+        world_size_x, world_size_y = config.world_size
+        self.body[0] = ((x + dx) % world_size_x, (y + dy) % world_size_y)
