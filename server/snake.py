@@ -12,9 +12,10 @@ class Direction(Enum):
 
 class Snake:
     def __init__(self, body, direction):
-        self.cooldown_in_ms = 1000
         self.body = deque(body)
         self.direction = direction
+        self.cooldown_in_ms = 1000
+        self.last_update = 0
 
     def create_at(head_x, head_y, direction=Direction.LEFT):
         return Snake([(head_x, head_y), ], direction)

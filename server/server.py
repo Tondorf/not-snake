@@ -6,10 +6,10 @@ import time
 
 import websockets
 
+from food import food
 from snake import Snake, Direction
 
 snake = Snake.create_at(10, 10)
-last_update = 0
 
 
 def time_in_ms():
@@ -17,31 +17,28 @@ def time_in_ms():
 
 
 def serialize_coordinates(coordinates):
-    xs, ys = zip(*coordinates)
-    return json.dumps({'xs': xs, 'ys': ys})
+    if coordinates:
+        xs, ys = zip(*coordinates)
+    else:
+        xs, ys = [], []
+    return {'xs': xs, 'ys': ys}
 
 
 def consumer(message, path):
-    strip_leading_slash = lambda str: str[1:] if str.startswith('/') else str
-    strip_trailing_slash = lambda str: str[:-1] if path.endswith('/') else str
-    path = strip_trailing_slash(strip_leading_slash(path))
-
-    if path == snake:
-        try:
-            snake.direction = Direction(int(message))
-        except ValueError:
-            pass
+    try:
+        snake.direction = Direction(int(message))
+    except ValueError:
+        pass
 
 
 def producer():
-    global last_update
-
     now = time_in_ms()
-    if now - last_update > snake.cooldown_in_ms:
+    if now - snake.last_update > snake.cooldown_in_ms:
         snake.move()
-        last_update = now
+        snake.last_update = now
 
-    return serialize_coordinates(snake.body)
+    return json.dumps({'snake': serialize_coordinates(snake.body),
+                       'food' : serialize_coordinates(food)})
 
 
 async def consumer_handler(websocket, path):
