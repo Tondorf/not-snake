@@ -55,7 +55,6 @@ function create() {
     controls = this.input.keyboard.createCursorKeys();
 
     graphics = this.add.graphics();
-    console.log(graphics);
 }
 
 function update(time, delta) {
@@ -82,20 +81,19 @@ function zip(as, bs) {
 }
 
 function new_world(json) {
-    snake = json.snake;
-    food = json.food;
-
     graphics.clear();
 
     graphics.lineStyle(1, 0x000000, 1);
     graphics.fillStyle(0x000000, 1);
-    zip(snake.xs, snake.ys).forEach(function (pos) {
-        graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
+    json.snakes.forEach(function (snake) {
+        zip(snake.xs, snake.ys).forEach(function (pos) {
+            graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
+        });
     });
 
     graphics.lineStyle(1, 0xff0000, 1);
     graphics.fillStyle(0xff0000, 1);
-    zip(food.xs, food.ys).forEach(function (pos) {
+    zip(json.food.xs, json.food.ys).forEach(function (pos) {
         graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
     });
 }
