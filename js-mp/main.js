@@ -16,7 +16,7 @@ const LEFT = 3;
 const DOWN = 4;
 const SPACE = 5;
 
-var websocket = new WebSocket('ws://127.0.0.1:8080');
+var websocket = new WebSocket('ws://' + window.location.hostname + ':8080');
 
 websocket.onmessage = function (event) {
     new_world(JSON.parse(event.data));
