@@ -44,7 +44,7 @@ def update_world():
 
 async def consumer_handler(websocket, path):
     async for message in websocket:
-        consumer(message, path)
+        consumer(websocket, message)
 
 
 async def producer_handler(websocket, path):
