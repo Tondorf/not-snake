@@ -18,8 +18,10 @@ var controls;
 var game = new Phaser.Game(config);
 
 function preload() {
-    this.load.image('food', 'image/food.png');
-    this.load.image('body', 'image/body.png');
+    this.load.image('food', 'image/food16.png');
+    this.load.image('body', 'image/body16.png');
+    this.load.image('apple', 'image/apple16.png');
+    this.load.image('pill', 'image/pill16.png');
 }
 
 function create() {
@@ -56,9 +58,14 @@ function update(time, delta) {
 
     if (snake.update(time)) {
         //  If the snake updated, we need to check for collision against food
-        food.meals.getChildren().forEach(function(meal) {
-            if (snake.collideWithMeal(food, meal) && food.meals.getLength() < MAX_MEALS_ON_SCREEN) {
-                placeNewMeal(food);
+        food.nutrients.getChildren().forEach(function(meal) {
+            if (snake.collideWithMeal(food, meal) && food.nutrients.getLength() < MAX_MEALS_ON_SCREEN) {
+                food.newRandomNutrient(food);
+            }
+        });
+        food.garbage.getChildren().forEach(function(pill) {
+            if (snake.collideWithPill(food, pill) && food.garbage.getLength() < MAX_MEALS_ON_SCREEN) {
+                food.newRandomGarbage(food);
             }
         });
     }

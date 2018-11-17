@@ -3,7 +3,7 @@ const GRID_SIZE = 16;
 const GRID_X = 75; // 75
 const GRID_Y = 50; // 50
 const STARTLENGTH = 20;
-const MAX_MEALS_ON_SCREEN = 3;
+const MAX_MEALS_ON_SCREEN = 3; // per type
 
 // Game Globals
 const GAME_X = GRID_X * GRID_SIZE;

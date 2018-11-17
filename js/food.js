@@ -5,49 +5,62 @@ var Food = new Phaser.Class({
     initialize: function Food(scene, x, y) {
         Phaser.GameObjects.Image.call(this, scene);
 
-        // list of meals
-        this.meals = scene.add.group();
+        // list of nutrients and garbage
+        this.nutrients = scene.add.group();
+        this.garbage = scene.add.group();
 
         // create one
-        this.newFood(x, y);
+        this.newNutrient({x: x, y: y});
+        while (this.nutrients.getLength() < MAX_MEALS_ON_SCREEN) {
+            this.newRandomNutrient();
+        }
 
-        // and more
-        while (this.meals.getLength() < MAX_MEALS_ON_SCREEN) {
-            placeNewMeal(this);
+        while (this.garbage.getLength() < MAX_MEALS_ON_SCREEN) {
+            this.newRandomGarbage();
         }
 
         this.totalEaten = 0;
+        this.garbageEaten = 0;
 
         scene.children.add(this);
     },
 
-    newFood: function (x, y) {
-        var newMeal = this.meals.create(x * GRID_SIZE, y * GRID_SIZE, 'food');
-        newMeal.setOrigin(0);
+    newRandomNutrient: function () {
+        var pos = getLegalSpawnPosition(this);
+        if (pos !== false) {
+            this.newNutrient(pos);
+        }
     },
 
-    increment: function () {
-        this.totalEaten++;
+    newNutrient: function (pos) {
+        this.nutrients.create(pos.x * GRID_SIZE, pos.y * GRID_SIZE, 'apple').setOrigin(0);
+    },
+
+    newRandomGarbage: function () {
+        var pos = getLegalSpawnPosition(this);
+        if (pos !== false) {
+            this.newGarbage(pos);
+        }
+    },
+
+    newGarbage: function (pos) {
+        this.garbage.create(pos.x * GRID_SIZE, pos.y * GRID_SIZE, 'pill').setOrigin(0);
     }
 
 });
 
 /**
- * We can place the food anywhere in our GRID_X * GRID_Y grid
+ * We can place the edible anywhere in our GRID_X * GRID_Y grid
  * *except* on-top of the snake, so we need
- * to filter those out of the possible food locations.
+ * to filter those out of the possible edible locations.
  * If there aren't any locations left, they've won!
  *
- * @method placeNewMeal
- * @return {boolean} true if the food was placed, otherwise false
+ * @method getLegalSpawnPosition
+ * @return {boolean} true if the edible was placed, otherwise false
  */
-function placeNewMeal(food) {
-    if (food.meals.getLength() >= MAX_MEALS_ON_SCREEN) {
-        console.error("FOOD SHOULDN'T BE PLACED!!!");
-    }
-
+function getLegalSpawnPosition(food) {
     //  First create an array that assumes all positions
-    //  are valid for the new piece of food
+    //  are valid for new food items
 
     //  A Grid we'll use to reposition the food each time it's eaten
     var testGrid = [];
@@ -67,20 +80,15 @@ function placeNewMeal(food) {
     for (var y = 0; y < GRID_Y; y++) {
         for (var x = 0; x < GRID_X; x++) {
             if (testGrid[y][x] === true) {
-                //  Is this position valid for food? If so, add it here ...
+                //  Is this position valid for edible? If so, add it here ...
                 validLocations.push({x: x, y: y});
             }
         }
     }
 
     if (validLocations.length > 0) {
-        //  Use the RNG to pick a random food position
-        var pos = Phaser.Math.RND.pick(validLocations);
-
-        //  And place it
-        food.newFood(pos.x, pos.y);
-
-        return true;
+        //  Use the RNG to pick a random edible position
+        return Phaser.Math.RND.pick(validLocations);
     } else {
         return false;
     }
