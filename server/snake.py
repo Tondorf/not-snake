@@ -2,7 +2,6 @@ from collections import deque
 from enum import Enum
 
 import config
-import food
 
 
 class Direction(Enum):
@@ -41,7 +40,7 @@ class Snake:
         if valid:
             self._direction = direction
 
-    def move(self):
+    def move(self, world):
         delta = (0, 0)
         if self.direction is Direction.RIGHT:
             delta = (1, 0)
@@ -61,9 +60,9 @@ class Snake:
         world_size_x, world_size_y = config.world_size
         self.body[0] = ((x + dx) % world_size_x, (y + dy) % world_size_y)
 
-        if self.body[0] in food.food:
+        if self.body[0] in world.food:
             self.body.append(tail)
-            food.food = []
+            world.food = []
 
         if self.body[0] in list(self.body)[1:]:
             self.dead = True
