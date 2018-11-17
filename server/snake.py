@@ -46,11 +46,11 @@ class Snake:
         if self.direction is Direction.RIGHT:
             delta = (1, 0)
         elif self.direction is Direction.TOP:
-            delta = (0, 1)
+            delta = (0, -1)
         elif self.direction is Direction.LEFT:
             delta = (-1, 0)
         elif self.direction is Direction.BOTTOM:
-            delta = (0, -1)
+            delta = (0, 1)
 
         head = self.body[0]
         tail = self.body[-1]
