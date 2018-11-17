@@ -16,5 +16,5 @@ def spawn_food(exclude=[]):
 
     world_size_x, world_size_y = config.world_size
     xs, ys = zip(*exclude)
-    x, y = get_random(0, world_size_x, xs), get_random(0, world_size_y, ys)
-    food.append(x, y)
+    x, y = get_random((0, world_size_x), xs), get_random((0, world_size_y), ys)
+    food.append((x, y))

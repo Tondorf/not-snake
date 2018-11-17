@@ -6,7 +6,7 @@ import time
 
 import websockets
 
-from food import food
+from food import food, spawn_food
 from snake import Snake, Direction
 
 snake = Snake.create_at(10, 10)
@@ -37,8 +37,11 @@ def update_world():
         snake.move()
         snake.last_update = now
 
+    if not food:
+        spawn_food(snake.body)
+
     return json.dumps({'snake': serialize_coordinates(snake.body),
-                       'food' : serialize_coordinates(food)})
+                       'food': serialize_coordinates(food)})
 
 
 async def consumer_handler(websocket, path):

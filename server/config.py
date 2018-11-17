@@ -1,1 +1,1 @@
-world_size= 75, 50
+world_size = 75, 50

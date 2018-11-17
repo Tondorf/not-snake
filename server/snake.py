@@ -1,6 +1,8 @@
 from collections import deque
 from enum import Enum
+
 import config
+import food
 
 
 class Direction(Enum):
@@ -31,9 +33,15 @@ class Snake:
         elif self.direction is Direction.BOTTOM:
             delta = (0, -1)
 
+        head = self.body[0]
+        tail = self.body[-1]
         self.body.rotate(1)
 
-        x, y = self.body[0][0:2]
+        x, y = head
         dx, dy = delta
         world_size_x, world_size_y = config.world_size
         self.body[0] = ((x + dx) % world_size_x, (y + dy) % world_size_y)
+
+        if self.body[0] in food.food:
+            self.body.append(tail)
+            food.food = []
