@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import asyncio
+import json
 import time
 
 import websockets
@@ -13,6 +14,11 @@ last_update = 0
 
 def time_in_ms():
     return time.time() * 1000.
+
+
+def serialize_coordinates(coordinates):
+    xs, ys = zip(*coordinates)
+    return json.dumps({'xs': xs, 'ys': ys})
 
 
 def consumer(message):
@@ -30,7 +36,7 @@ def producer():
         snake.move()
         last_update = now
 
-    return snake.serialize_body()
+    return serialize_coordinates(snake.body)
 
 
 async def consumer_handler(websocket, path):

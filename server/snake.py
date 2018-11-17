@@ -1,6 +1,5 @@
 from collections import deque
 from enum import Enum
-import json
 
 
 class Direction(Enum):
@@ -17,12 +16,7 @@ class Snake:
         self.direction = direction
 
     def create_at(head_x, head_y, direction=Direction.LEFT):
-        return Snake([(head_x, head_y),], direction)
-
-    def serialize_body(self):
-        xs = [x for (x, _) in self.body]
-        ys = [y for (_, y) in self.body]
-        return json.dumps({'xs' : xs, 'ys' : ys})
+        return Snake([(head_x, head_y), ], direction)
 
     def move(self):
         delta = (0, 0)
