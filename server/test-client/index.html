@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <button onclick='handle(3)'>left</button>
+        <button onclick='handle(2)'>top</button>
+        <button onclick='handle(4)'>bottom</button>
+        <button onclick='handle(1)'>right</button>
+
+        <div id='output'></div>
+
+        <script>
+            var button = document.getElementsByTagName('button')
+            var output = document.getElementById('output');
+            var websocket = new WebSocket('ws://127.0.0.1:8080');
+            
+            function handle(value) {
+                websocket.send(value);
+            };
+
+            websocket.onmessage = function (event) {
+                output.innerHTML = event.data
+            };
+        </script>
+    </body>
+</html>
