@@ -31,7 +31,7 @@ def consumer(message, path):
         pass
 
 
-def producer():
+def update_world():
     now = time_in_ms()
     if now - snake.last_update > snake.cooldown_in_ms:
         snake.move()
@@ -51,7 +51,7 @@ async def producer_handler(websocket, path):
     sleep_time = 100 * one_ms;
 
     while True:
-        message = producer()
+        message = update_world()
         await websocket.send(message)
         await asyncio.sleep(sleep_time)
 
