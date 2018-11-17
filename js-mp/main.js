@@ -51,20 +51,18 @@ function preload() {
 }
 
 function create() {
-    snake = new Snake(this, 8, 8);
-    food = new Food(this, 24, 8);
-
     //  Create our keyboard controls
     controls = this.input.keyboard.createCursorKeys();
 
     graphics = this.add.graphics();
+    console.log(graphics);
 }
 
 function update(time, delta) {
     if (controls.left.isDown) {
         websocket.send(LEFT);
     } else if (controls.right.isDown) {
-        websocket.send(DOWN);
+        websocket.send(RIGHT);
     } else if (controls.up.isDown) {
         websocket.send(UP);
     } else if (controls.down.isDown) {
@@ -84,13 +82,16 @@ function zip(as, bs) {
 }
 
 function new_world(json) {
-    positions = zip(json.xs, json.ys);
-    console.log(positions);
+    snake = json.snake;
+    food = json.food;
+
+    positions = zip(snake.xs, snake.ys);
+    console.log(snake);
 
     graphics.clear();
-    graphics.lineStyle(1, 0x000000, 0.5);
-    graphics.fillStyle(0x000000, 0.5);
+    graphics.lineStyle(1, 0x000000, 1);
+    graphics.fillStyle(0x000000, 1);
     positions.forEach(function (pos) {
-        graphics.fillRect(pos[0], pos[1], 16, 16);
+        graphics.fillRect(pos[0]*GRID_SIZE+1, pos[1]*GRID_SIZE+1, GRID_SIZE-2, GRID_SIZE-2);
     });
 }
