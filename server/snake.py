@@ -15,7 +15,7 @@ class Snake:
     def __init__(self, body, direction):
         self.body = deque(body)
         self._direction = direction
-        self.cooldown_in_ms = 1000
+        self.cooldown_in_ms = config.snake_init_cooldown_in_ms
         self.last_update = 0
         self.dead = False
 
