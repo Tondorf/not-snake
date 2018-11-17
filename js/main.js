@@ -50,6 +50,8 @@ function update(time, delta) {
         snake.faceUp();
     } else if (controls.down.isDown) {
         snake.faceDown();
+    } else if (this.input.keyboard.checkDown(controls.space, 1000)) {
+        snake.shrink();
     }
 
     if (snake.update(time)) {

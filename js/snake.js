@@ -93,6 +93,17 @@ var Snake = new Phaser.Class({
         newPart.setOrigin(0);
     },
 
+    shrink: function () {
+        if (this.body.getLength() <= 1) {
+            return;
+        }
+        console.log('shrink');
+        var victim = this.body.getChildren()[this.body.getLength()-1]; // get last element
+        //console.log(victim);
+        this.body.kill(victim);
+        this.body.remove(victim, true, true);
+    },
+
     collideWithFood: function (food) {
         if (this.head.x === food.x && this.head.y === food.y) {
             this.grow();
