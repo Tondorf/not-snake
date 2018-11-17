@@ -1,3 +1,27 @@
+// Game Field
+const GRID_SIZE = 16;
+const GRID_X = 75; // 75
+const GRID_Y = 50; // 50
+
+// Game Globals
+const GAME_X = GRID_X * GRID_SIZE;
+const GAME_Y = GRID_Y * GRID_SIZE;
+const BG_COLOR = "#101010";
+const PLAYFIELD_BG_COLOR = '#e1ae15';
+
+//  Direction consts
+const RIGHT = 1;
+const UP = 2;
+const LEFT = 3;
+const DOWN = 4;
+const SPACE = 5;
+
+var websocket = new WebSocket('ws://127.0.0.1:8080');
+
+websocket.onmessage = function (event) {
+    new_world(JSON.parse(event.data));
+};
+
 var config = {
     type: Phaser.AUTO,
     width: GAME_X,
@@ -17,9 +41,11 @@ var controls;
 
 var game = new Phaser.Game(config);
 
+var graphics;
+
 function preload() {
-    this.load.image('food', 'image/food16.png');
     this.load.image('body', 'image/body16.png');
+    this.load.image('food', 'image/food16.png');
     this.load.image('apple', 'image/apple16.png');
     this.load.image('pill', 'image/pill16.png');
 }
@@ -30,43 +56,41 @@ function create() {
 
     //  Create our keyboard controls
     controls = this.input.keyboard.createCursorKeys();
+
+    graphics = this.add.graphics();
 }
 
 function update(time, delta) {
-    if (!snake.alive) {
-        return;
-    }
-
-    /**
-     * Check which key is pressed, and then change the direction the snake
-     * is heading based on that. The checks ensure you don't double-back
-     * on yourself, for example if you're moving to the right and you press
-     * the LEFT cursor, it ignores it, because the only valid directions you
-     * can move in at that time is up and down.
-     */
     if (controls.left.isDown) {
-        snake.faceLeft();
+        websocket.send(LEFT);
     } else if (controls.right.isDown) {
-        snake.faceRight();
+        websocket.send(DOWN);
     } else if (controls.up.isDown) {
-        snake.faceUp();
+        websocket.send(UP);
     } else if (controls.down.isDown) {
-        snake.faceDown();
+        websocket.send(DOWN);
     } else if (this.input.keyboard.checkDown(controls.space, 1000)) {
-        snake.shrink();
+        websocket.send(SPACE);
     }
+}
 
-    if (snake.update(time)) {
-        //  If the snake updated, we need to check for collision against food
-        food.nutrients.getChildren().forEach(function(meal) {
-            if (snake.collideWithMeal(food, meal) && food.nutrients.getLength() < MAX_MEALS_ON_SCREEN) {
-                food.newRandomNutrient(food);
-            }
-        });
-        food.garbage.getChildren().forEach(function(pill) {
-            if (snake.collideWithPill(food, pill) && food.garbage.getLength() < MAX_MEALS_ON_SCREEN) {
-                food.newRandomGarbage(food);
-            }
-        });
+function zip(as, bs) {
+    //console.assert(as.length === bs.length);
+    cs = [];
+    for (i=0; i < as.length; i++) {
+        cs.push([as[i], bs[i]]);
     }
+    return cs;
+}
+
+function new_world(json) {
+    positions = zip(json.xs, json.ys);
+    console.log(positions);
+
+    graphics.clear();
+    graphics.lineStyle(1, 0x000000, 0.5);
+    graphics.fillStyle(0x000000, 0.5);
+    positions.forEach(function (pos) {
+        graphics.fillRect(pos[0], pos[1], 16, 16);
+    });
 }
