@@ -66,10 +66,11 @@ class Snake:
             self.body.append(tail)
             world.food = []
 
+        # collision detection, without head-head check
         pos = list(self.body)[1:]
         for id in world.snakes:
             if id != self.id:
-                pos += list(world.snakes[id].body)
+                pos += list(world.snakes[id].body)[1:]
 
         if head in pos:
             self.dead = True

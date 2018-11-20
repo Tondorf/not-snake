@@ -43,6 +43,12 @@ class World:
             del self.snakes[id]
 
     def update(self, now):
+        # collision detection head-head
+        heads = [self.snakes[id].body[0] for id in self.snakes]
+        for id in self.snakes:
+            if heads.count(self.snakes[id].body[0]) > 1:
+                self.snakes[id].dead = True
+
         dead_snakes = []
         for id in self.snakes:
             snake = self.snakes[id]
